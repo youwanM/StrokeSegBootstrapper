@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
 
-project(StrokeSegBootStrapper VERSION 1.0 LANGUAGES CXX)
+project(${PREFIX_NAME}BootStrapper VERSION 1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 
 ###############################################################################
@@ -13,8 +13,6 @@ set(SOURCES # List of all source files
     helpers.cpp
     commandLineTools.cpp
     main.cpp
-	
-	StrokeSegBootStrapper.rc
 )
 
 set(HEADERS # List of all header files
@@ -23,9 +21,13 @@ set(HEADERS # List of all header files
     helpers.h
     commandLineTools.h
     deps.h
-	
-	resource.h
 )
+
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/BootStrapper.rc")
+  list(APPEND SOURCES BootStrapper.rc)
+  list(APPEND HEADERS resource.h)
+endif()
+
 
 ###############################################################################
 # Add the executable

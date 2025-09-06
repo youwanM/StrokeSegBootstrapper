@@ -24,8 +24,8 @@ set(HEADERS # List of all header files
 )
 
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/BootStrapper.rc")
-  list(APPEND SOURCES BootStrapper.rc)
-  list(APPEND HEADERS resource.h)
+    list(APPEND SOURCES BootStrapper.rc)
+    list(APPEND HEADERS resource.h)
 endif()
 
 

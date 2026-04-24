@@ -1,8 +1,8 @@
 #include "executors.h"
 
-bool execWithConsole(const std::wstring& childExePath, const std::wstring& selfDirPath, int consoleStatus)
+DWORD execWithConsole(const std::wstring& childExePath, const std::wstring& selfDirPath, int consoleStatus)
 {
-    bool bRes = true;
+    DWORD exitCode = 1; // Default to 1 (Error) in case it fails to launch
 
     STARTUPINFOW si;
     PROCESS_INFORMATION pi;
@@ -39,11 +39,16 @@ bool execWithConsole(const std::wstring& childExePath, const std::wstring& selfD
     ))
     {
         std::wcerr << L"CreateProcessW failed (" << GetLastError() << L")." << std::endl;
-        bRes = false;
+        return exitCode; // Return the error state
     }
     else
     {
+        // 1. Wait for Python to completely finish
         WaitForSingleObject(pi.hProcess, INFINITE);
+
+        // 2. Grab the exit code from Python (0 = Success, 1 = Error)
+        GetExitCodeProcess(pi.hProcess, &exitCode);
+
         CloseHandle(pi.hProcess);
         CloseHandle(pi.hThread);
     }
@@ -59,12 +64,12 @@ bool execWithConsole(const std::wstring& childExePath, const std::wstring& selfD
     }
     FreeConsole();
 
-    return bRes;
+    return exitCode; // Pass the Python status back
 }
 
-bool execWitoutConsole(const std::wstring& childExePath, const std::wstring& selfDirPath)
+DWORD execWitoutConsole(const std::wstring& childExePath, const std::wstring& selfDirPath)
 {
-    bool bRes = true;
+    DWORD exitCode = 1; // Default to 1 (Error)
 
     STARTUPINFOW si;
     PROCESS_INFORMATION pi;
@@ -91,14 +96,19 @@ bool execWitoutConsole(const std::wstring& childExePath, const std::wstring& sel
     ))
     {
         MessageBoxW(NULL, (L"Failed to launch Python GUI. Error code: " + std::to_wstring(GetLastError())).c_str(), L"Launcher Error", MB_OK | MB_ICONERROR);
-        bRes = false;
+        return exitCode;
     }
     else
     {
+        // 1. Wait for Python Tkinter GUI to close
         WaitForSingleObject(pi.hProcess, INFINITE);
+
+        // 2. Grab the exit code
+        GetExitCodeProcess(pi.hProcess, &exitCode);
+
         CloseHandle(pi.hProcess);
         CloseHandle(pi.hThread);
     }
 
-    return bRes;
+    return exitCode; // Pass the Python status back
 }

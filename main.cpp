@@ -8,6 +8,9 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
     std::filesystem::path currentExecutableDirPath;
     std::filesystem::path pythonExecutablePath;
 
+    // This will hold the final status of our application
+    DWORD finalStatus = 1;
+
     LPWSTR* argvW = extractAndCheck(argc, currentExecutableDirPath, pythonExecutablePath);
 
     if (argvW)
@@ -19,14 +22,14 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 
         if (!console)
         {
-            // GUI Phase: Run silently, wait for the user to pick a threshold and close
-            execWitoutConsole(commandLine, currentExecutableDirPath.wstring());
+            // GUI Phase
+            finalStatus = execWitoutConsole(commandLine, currentExecutableDirPath.wstring());
         }
         else
         {
-            // Console Phase: Allocate console, run the heavy processing
+            // Console Phase
             int consoleStatus = allocateConsole(TEXT("Stroke Segmentation Engine"));
-            execWithConsole(commandLine, currentExecutableDirPath.wstring(), consoleStatus);
+            finalStatus = execWithConsole(commandLine, currentExecutableDirPath.wstring(), consoleStatus);
         }
     }
     else
@@ -35,5 +38,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
     }
 
     LocalFree(argvW);
-    return 0;
+
+    // Return the status back to syngo.via!
+    return static_cast<int>(finalStatus);
 }

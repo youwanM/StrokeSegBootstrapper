@@ -20,7 +20,7 @@
  * @param consoleStatus The status of the console (1 for inherit console from parent, 0 for new fresh console, -1 for no console available).
  * @return True if the process was launched successfully, false otherwise.
  */
-bool execWithConsole(const std::wstring& commandLine, const std::wstring& selfDirPath, int consoleStatus = 0);
+DWORD execWithConsole(const std::wstring& commandLine, const std::wstring& selfDirPath, int consoleStatus = 0);
 
 /**
  * @brief Launches a child process in the background.
@@ -29,4 +29,4 @@ bool execWithConsole(const std::wstring& commandLine, const std::wstring& selfDi
  * @param selfDirPath The directory path of the current executable.
  * @return True if the process was launched successfully, false otherwise.
  */
-bool execWitoutConsole(const std::wstring& commandLine, const std::wstring& selfDirPath);
+DWORD execWitoutConsole(const std::wstring& commandLine, const std::wstring& selfDirPath);
